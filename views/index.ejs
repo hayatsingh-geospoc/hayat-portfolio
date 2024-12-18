@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <title><%= profile.name %> - Portfolio</title>
+</head>
+<body>
+  <!-- Canvas for Three.js Animation -->
+  <canvas id="threejs-background"></canvas>
+
+  <header>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="about">
+      <h1>Hi, I'm <%= profile.name %></h1>
+      <h2><%= profile.role %></h2>
+      <p><%= profile.bio %></p>
+    </section>
+
+    <section id="skills">
+      <h2>Skills</h2>
+      <ul>
+        <% profile.skills.forEach(skill => { %>
+          <li><%= skill %></li>
+        <% }); %>
+      </ul>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <% profile.projects.forEach(project => { %>
+        <div class="project">
+          <h3><%= project.name %></h3>
+          <p><%= project.description %></p>
+          <strong>Technologies:</strong>
+          <ul>
+            <% project.technologies.forEach(tech => { %>
+              <li><%= tech %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% }); %>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:<%= profile.contact.email %>"><%= profile.contact.email %></a></p>
+      <p>LinkedIn: <a href="<%= profile.contact.linkedin %>" target="_blank">Profile</a></p>
+      <p>GitHub: <a href="<%= profile.contact.github %>" target="_blank">Repository</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2024 <%= profile.name %>. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Three.js Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+  <script src="/js/threejs-script.js"></script>
+</body>
+</html>

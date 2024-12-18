@@ -1,0 +1,17 @@
+{
+  "name": "hayat-portfolio",
+  "version": "1.0.0",
+  "description": "This is a dynamic portfolio web application built using Node.js, Express.js, and EJS, designed for a backend software engineer with 3 years of experience. The application dynamically renders profile information such as skills, projects, and contact details.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "three": "^0.170.0"
+  }
+}
