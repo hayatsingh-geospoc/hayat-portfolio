@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hayat Singh - Portfolio</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Arial', sans-serif;
+      }
+
+      body {
+        background-color: #0a0a0a;
+        color: #fff;
+        line-height: 1.6;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Enhanced Lost Signal Effect */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            rgba(10, 10, 10, 0.8),
+            rgba(10, 10, 10, 0.8)
+          ),
+          repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 0, 0.1) 2px,
+            rgba(0, 255, 0, 0.1) 4px
+          );
+        animation: scan 15s linear infinite;
+        pointer-events: none;
+        z-index: -2;
+      }
+
+      /* Additional Signal Noise Effect */
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 50% 50%,
+            rgba(0, 255, 0, 0.1) 0%,
+            transparent 50%
+          ),
+          repeating-radial-gradient(
+            circle at 50% 50%,
+            transparent 0,
+            rgba(0, 255, 0, 0.05) 1px,
+            transparent 2px
+          );
+        opacity: 0.7;
+        animation: noise 0.5s steps(4) infinite, pulse 4s ease-in-out infinite;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      @keyframes scan {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 100% 100%;
+        }
+      }
+
+      @keyframes noise {
+        0%,
+        100% {
+          transform: translate(0, 0) scale(1);
+        }
+        25% {
+          transform: translate(-1%, 1%) scale(0.99);
+        }
+        50% {
+          transform: translate(1%, -1%) scale(1.01);
+        }
+        75% {
+          transform: translate(-1%, -1%) scale(0.98);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        position: relative;
+      }
+
+      header {
+        text-align: center;
+        padding: 4rem 0;
+        position: relative;
+      }
+
+      .glitch {
+        font-size: 3rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        position: relative;
+        text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+          -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+          0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+        animation: glitch 500ms infinite;
+      }
+
+      .about {
+        margin: 2rem 0;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+      }
+
+      .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 1rem 0;
+      }
+
+      .tech-item {
+        background: rgba(0, 255, 0, 0.1);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .tech-item:hover {
+        background: rgba(0, 255, 0, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .projects {
+        margin-top: 4rem;
+      }
+
+      .project-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        margin: 2rem 0;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 255, 0, 0.1);
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(5px);
+      }
+
+      .project-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 255, 0, 0.3);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.1);
+      }
+
+      h2 {
+        color: #00ff00;
+        margin-bottom: 1rem;
+      }
+
+      ul {
+        list-style-position: inside;
+        margin: 1rem 0;
+      }
+
+      @keyframes glitch {
+        0% {
+          text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+            -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+            0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+        }
+        14% {
+          text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+            -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+            0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+        }
+        15% {
+          text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+            0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+            -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+        }
+        49% {
+          text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+            0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+            -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+        }
+        50% {
+          text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+            0.05em 0 0 rgba(0, 255, 0, 0.75), 0 -0.05em 0 rgba(0, 0, 255, 0.75);
+        }
+        99% {
+          text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+            0.05em 0 0 rgba(0, 255, 0, 0.75), 0 -0.05em 0 rgba(0, 0, 255, 0.75);
+        }
+        100% {
+          text-shadow: -0.025em 0 0 rgba(255, 0, 0, 0.75),
+            -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+            -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+        }
+      }
+
+      .contact {
+        margin-top: 4rem;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(0, 255, 0, 0.05);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .contact-item:hover {
+        transform: translateY(-2px);
+        background: rgba(0, 255, 0, 0.1);
+      }
+
+      .contact-item i {
+        font-size: 1.5rem;
+        color: #00ff00;
+      }
+
+      .contact-item a {
+        color: #fff;
+        text-decoration: none;
+        word-break: break-all;
+      }
+
+      .contact-item a:hover {
+        color: #00ff00;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1 class="glitch">Hayat Singh</h1>
+        <p>Full Stack Developer</p>
+      </header>
+
+      <section class="about">
+        <h2>About Me</h2>
+        <p>
+          Full Stack Developer with 3 years of experience, based in India/UK.
+          Specialized in building robust and scalable full-stack solutions.
+        </p>
+
+        <h3>Tech Stack</h3>
+        <div class="tech-stack">
+          <span class="tech-item">JavaScript (ES6+)</span>
+          <span class="tech-item">Node.js</span>
+          <span class="tech-item">TypeScript</span>
+          <span class="tech-item">Express.js</span>
+          <span class="tech-item">NestJS</span>
+          <span class="tech-item">ReactJs</span>
+          <span class="tech-item">VueJs</span>
+          <span class="tech-item">MySQL</span>
+          <span class="tech-item">PostgreSQL</span>
+          <span class="tech-item">MongoDB</span>
+          <span class="tech-item">AWS</span>
+          <span class="tech-item">Docker</span>
+          <span class="tech-item">Azure</span>
+        </div>
+      </section>
+
+      <section class="projects">
+        <h2>Projects</h2>
+
+        <div class="project-card">
+          <h3>EVERVENT Private Limited - JIO Insure Portal</h3>
+          <p><strong>Role:</strong> Backend Developer (Node.js)</p>
+          <p><strong>Duration:</strong> Sep 2023 - Present</p>
+          <p>
+            <strong>Technologies:</strong> Node.js, Express.js/NestJS, RESTful
+            APIs, XML, MongoDB/SQL, Axios/Cheerio
+          </p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>
+              Integrated insurers' APIs to fetch and recalculate premiums in a
+              unified portal
+            </li>
+            <li>Optimized API endpoints for dynamic premium calculations</li>
+            <li>
+              Implemented KYC processes with third-party verification services
+            </li>
+            <li>
+              Developed a custom Zoho Desk ticketing API and customized platform
+              features for Bimastreet client requirements
+            </li>
+            <li>
+              Seamlessly integrated with the Bimastreet portal for unified
+              insurance services and real-time communication
+            </li>
+            <li>Developed secure proposal submission flows for insurers</li>
+            <li>
+              Enhanced API scalability to handle high request volumes
+              efficiently
+            </li>
+          </ul>
+        </div>
+
+        <div class="project-card">
+          <h3>Geospoc (An OLA Company) - SDE-1</h3>
+          <p><strong>Role:</strong> Full Stack Developer</p>
+          <p><strong>Duration:</strong> Jan 2022 - Sep 2023</p>
+          <p><strong>Project:</strong> Ola Maps - API Development</p>
+          <h4>Key Achievements:</h4>
+          <ul>
+            <li>
+              Developed an API to process large volumes of CSV data, modify it
+              according to requirements, and send it as query parameters via
+              Axios to retrieve user's initial and final positions in PNG format
+            </li>
+            <li>
+              Conducted R&D using Planetiler repository to generate complete
+              India map from scratch, optimizing benchmarking, latency, and data
+              size for MBTiles
+            </li>
+            <li>
+              Integrated PMTiles support into TileServer-GL-JS, enhancing Ola's
+              map-rendering server for efficient browser-based map display
+            </li>
+            <li>
+              Migrated a legacy PHP system to Node.js, improving performance,
+              scalability & maintainability
+            </li>
+            <li>
+              Optimized database interactions and implemented asynchronous
+              processing for improved performance
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="contact">
+        <h2>Contact Me</h2>
+        <div class="contact-grid">
+          <div class="contact-item">
+            <i class="fab fa-linkedin"></i>
+            <a
+              href="https://www.linkedin.com/in/hayat-singh-b4327b1b3"
+              target="_blank"
+              >LinkedIn</a
+            >
+          </div>
+          <div class="contact-item">
+            <i class="fab fa-github"></i>
+            <a href="https://github.com/hayatsingh-geospoc" target="_blank"
+              >GitHub</a
+            >
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <a href="mailto:jeet53316@gmail.com">jeet53316@gmail.com</a>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <a href="tel:+917409150572">+91 7409150572</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
