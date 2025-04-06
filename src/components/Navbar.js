@@ -1,217 +1,154 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
 
-const Nav = styled(motion.nav)`
+const NavBarContainer = styled.nav`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem 3rem;
+  padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 10;
+  z-index: 100;
+  background: rgba(10, 25, 47, 0.8);
   backdrop-filter: blur(10px);
-  background: ${({ $scrolled }) =>
-    $scrolled ? 'rgba(0, 0, 0, 0.8)' : 'transparent'};
-  transition: background 0.3s ease;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
+  border-bottom: 1px solid rgba(51, 153, 255, 0.2);
 `;
 
 const Logo = styled.div`
-  font-size: 1.8rem;
+  font-size: 24px;
   font-weight: 700;
-  color: #00ff00;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-  z-index: 20;
-`;
+  color: #3399ff;
+  letter-spacing: 2px;
+  cursor: pointer;
 
-const NavLinks = styled.div`
-  display: flex;
-  gap: 2rem;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const StyledNavLink = styled(NavLink)`
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 1.1rem;
-  position: relative;
-  transition: all 0.3s ease;
-
-  &:hover {
-    color: #00ff00;
+  &:after {
+    content: '_';
+    animation: blink 1s infinite;
   }
 
-  &.active {
-    color: #00ff00;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: #00ff00;
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
     }
   }
 `;
 
-const MobileMenuButton = styled.button`
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 1.5rem;
+const NavLinks = styled.div`
+  display: flex;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(10, 25, 47, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-bottom: 1px solid rgba(51, 153, 255, 0.2);
+  }
+`;
+
+const NavLink = styled.a`
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
   cursor: pointer;
+  padding: 5px 0;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #3399ff;
+    transition: width 0.3s ease;
+  }
+
+  &:hover:after {
+    width: 100%;
+  }
+
+  &.active:after {
+    width: 100%;
+  }
+`;
+
+const MobileMenuButton = styled.button`
   display: none;
-  z-index: 20;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
 
   @media (max-width: 768px) {
     display: block;
   }
 `;
 
-const MobileMenu = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  z-index: 10;
-
-  /* Netflix-inspired gradient */
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(20, 20, 20, 0.95) 100%
-  );
-`;
-
-const MobileNavLink = styled(NavLink)`
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 2rem;
-  transition: all 0.3s ease;
-
-  &:hover,
-  &.active {
-    color: #00ff00;
-    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-  }
-`;
-
-const mobileMenuVariants = {
-  hidden: { opacity: 0, x: '100%' },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-      damping: 20,
-    },
-  },
-  exit: {
-    opacity: 0,
-    x: '100%',
-    transition: {
-      type: 'spring',
-      stiffness: 250,
-      damping: 30,
-    },
-  },
-};
-
-const Navbar = () => {
+const Navbar = ({ sections }) => {
+  const [activeSection, setActiveSection] = useState('home');
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  // Function to scroll to a section
+  const scrollToSection = (ref) => {
+    ref.current.scrollIntoView({ behavior: 'smooth' });
+    setIsOpen(false);
   };
 
-  // Close menu when route changes
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location]);
-
-  // Add scroll effect
+  // Update active section based on scroll position
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+      const scrollPosition = window.scrollY + 100;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section.ref.current) {
+          const offsetTop = section.ref.current.offsetTop;
+
+          if (scrollPosition >= offsetTop) {
+            setActiveSection(section.id);
+            break;
+          }
+        }
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [sections]);
 
   return (
-    <>
-      <Nav
-        $scrolled={scrolled}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      >
-        <Logo>HS</Logo>
-        <NavLinks>
-          <StyledNavLink to='/'>Home</StyledNavLink>
-          <StyledNavLink to='/about'>About</StyledNavLink>
-          <StyledNavLink to='/projects'>Projects</StyledNavLink>
-          <StyledNavLink to='/contact'>Contact</StyledNavLink>
-        </NavLinks>
-        <MobileMenuButton onClick={toggleMenu}>
-          {isOpen ? '✕' : '☰'}
-        </MobileMenuButton>
-      </Nav>
-
-      <AnimatePresence>
-        {isOpen && (
-          <MobileMenu
-            variants={mobileMenuVariants}
-            initial='hidden'
-            animate='visible'
-            exit='exit'
+    <NavBarContainer>
+      <Logo>HAYAT</Logo>
+      <MobileMenuButton onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? '✕' : '☰'}
+      </MobileMenuButton>
+      <NavLinks isOpen={isOpen}>
+        {sections.map((section) => (
+          <NavLink
+            key={section.id}
+            onClick={() => scrollToSection(section.ref)}
+            className={activeSection === section.id ? 'active' : ''}
           >
-            <MobileNavLink to='/' onClick={() => setIsOpen(false)}>
-              Home
-            </MobileNavLink>
-            <MobileNavLink to='/about' onClick={() => setIsOpen(false)}>
-              About
-            </MobileNavLink>
-            <MobileNavLink to='/projects' onClick={() => setIsOpen(false)}>
-              Projects
-            </MobileNavLink>
-            <MobileNavLink to='/contact' onClick={() => setIsOpen(false)}>
-              Contact
-            </MobileNavLink>
-          </MobileMenu>
-        )}
-      </AnimatePresence>
-    </>
+            {section.label}
+          </NavLink>
+        ))}
+      </NavLinks>
+    </NavBarContainer>
   );
 };
 

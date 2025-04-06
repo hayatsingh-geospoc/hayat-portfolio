@@ -1,23 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-const blurText = keyframes`
+// Loading animation keyframes
+const scanAnimation = keyframes`
   0% {
-    filter: blur(0px);
+    transform: translateY(-100%);
   }
   100% {
-    filter: blur(4px);
+    transform: translateY(100vh);
   }
 `;
 
-const fadeIn = keyframes`
-  from {
+const fadeAnimation = keyframes`
+  0% {
     opacity: 0;
-    transform: translateY(20px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+`;
+
+const typeAnimation = keyframes`
+  from {
+    width: 0;
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    width: 100%;
+  }
+`;
+
+const blinkCursor = keyframes`
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #3399ff;
   }
 `;
 
@@ -26,106 +46,189 @@ const LoaderContainer = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background: #000;
+  height: 100vh;
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  overflow: hidden;
+`;
+
+const ScanLine = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(51, 153, 255, 0) 0%,
+    rgba(51, 153, 255, 0.5) 50%,
+    rgba(51, 153, 255, 0) 100%
+  );
+  box-shadow: 0 0 15px rgba(51, 153, 255, 0.7), 0 0 30px rgba(51, 153, 255, 0.5);
+  animation: ${scanAnimation} 2s ease-in-out infinite;
 `;
 
 const LoadingText = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  text-align: center;
-  width: 100%;
-  height: 100px;
-  line-height: 100px;
-  font-family: 'Quattrocento Sans', sans-serif;
+  font-family: 'Space Mono', monospace;
+  color: #3399ff;
+  font-size: 1.5rem;
+  text-shadow: 0 0 10px rgba(51, 153, 255, 0.5);
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+`;
 
-  span {
-    display: inline-block;
-    margin: 0 5px;
-    color: #fff;
-    font-size: 3rem;
-    font-weight: bold;
+const ProgressContainer = styled.div`
+  width: 300px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-top: 20px;
+  overflow: hidden;
+`;
 
-    &:nth-child(1) {
-      animation: ${blurText} 1.5s 0s infinite linear alternate;
-    }
-    &:nth-child(2) {
-      animation: ${blurText} 1.5s 0.2s infinite linear alternate;
-    }
-    &:nth-child(3) {
-      animation: ${blurText} 1.5s 0.4s infinite linear alternate;
-    }
-    &:nth-child(4) {
-      animation: ${blurText} 1.5s 0.6s infinite linear alternate;
-    }
-    &:nth-child(5) {
-      animation: ${blurText} 1.5s 0.8s infinite linear alternate;
-    }
-    &:nth-child(6) {
-      animation: ${blurText} 1.5s 1s infinite linear alternate;
-    }
+const ProgressBar = styled.div`
+  height: 100%;
+  background: #3399ff;
+  box-shadow: 0 0 10px rgba(51, 153, 255, 0.7);
+  width: ${(props) => props.$progress}%;
+  transition: width 0.3s ease;
+`;
+
+const CodeSnippet = styled.div`
+  background: rgba(10, 25, 47, 0.7);
+  padding: 15px;
+  border-radius: 5px;
+  width: 300px;
+  margin-top: 30px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  color: #ffffff;
+  position: relative;
+  border: 1px solid rgba(51, 153, 255, 0.3);
+  overflow: hidden;
+
+  &:before {
+    content: '// Initializing...';
+    display: block;
+    color: #666;
+    margin-bottom: 10px;
   }
 
-  @media (max-width: 768px) {
-    span {
-      font-size: 2rem;
-    }
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(51, 153, 255, 0.05) 100%
+    );
+    pointer-events: none;
   }
 `;
 
-const WelcomeMessage = styled.div`
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: #fff;
-  font-size: 2.5rem;
-  font-weight: bold;
-  opacity: 0;
-  animation: ${fadeIn} 0.5s ease-out forwards;
-  animation-delay: 2s;
-  font-family: 'Quattrocento Sans', sans-serif;
-
-  @media (max-width: 768px) {
-    font-size: 1.8rem;
-  }
+const TypedText = styled.div`
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid #3399ff;
+  animation: ${typeAnimation} 3.5s steps(40, end),
+    ${blinkCursor} 0.75s step-end infinite;
+  color: #3399ff;
 `;
+
+const ByteStream = styled.div`
+  position: absolute;
+  top: 20%;
+  color: rgba(51, 153, 255, 0.3);
+  font-size: 0.8rem;
+  font-family: 'Space Mono', monospace;
+  animation: ${fadeAnimation} 2s infinite;
+  pointer-events: none;
+`;
+
+const generateRandomBytes = () => {
+  const chars = '01';
+  let result = '';
+  for (let i = 0; i < 50; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
 
 const Loader = () => {
-  const [showWelcome, setShowWelcome] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [byteStreams, setByteStreams] = useState([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowWelcome(true);
-    }, 2000);
+    // Initialize progress animation
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 30);
 
-    return () => clearTimeout(timer);
+    // Generate byte streams for visual effect
+    for (let i = 0; i < 10; i++) {
+      setTimeout(() => {
+        setByteStreams((prev) => [
+          ...prev,
+          {
+            id: i,
+            bytes: generateRandomBytes(),
+            left: `${Math.random() * 80}%`,
+            top: `${Math.random() * 80}%`,
+            opacity: Math.random() * 0.5 + 0.2,
+          },
+        ]);
+      }, i * 200);
+    }
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <LoaderContainer>
-      <LoadingText>
-        <span>L</span>
-        <span>O</span>
-        <span>A</span>
-        <span>D</span>
-        <span>I</span>
-        <span>N</span>
-        <span>G</span>
-      </LoadingText>
-      {showWelcome && (
-        <WelcomeMessage>Welcome to Hayat's Profile</WelcomeMessage>
-      )}
+      <ScanLine />
+      {byteStreams.map((stream) => (
+        <ByteStream
+          key={stream.id}
+          style={{
+            left: stream.left,
+            top: stream.top,
+            opacity: stream.opacity,
+          }}
+        >
+          {stream.bytes}
+        </ByteStream>
+      ))}
+      <LoadingText>SYSTEM BOOT</LoadingText>
+      <CodeSnippet>
+        <TypedText>
+          import &#123; Portfolio &#125; from './HayatSingh';
+          <br />
+          <br />
+          const init = async () =&gt; &#123;
+          <br />
+          &nbsp;&nbsp;await Portfolio.render();
+          <br />
+          &nbsp;&nbsp;console.log('Welcome to my world');
+          <br />
+          &#125;;
+        </TypedText>
+      </CodeSnippet>
+      <ProgressContainer>
+        <ProgressBar $progress={progress} />
+      </ProgressContainer>
     </LoaderContainer>
   );
 };
